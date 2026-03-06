@@ -133,13 +133,53 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:64px 6%
 .fade-up.visible{opacity:1;transform:translateY(0);}
 @media(max-width:1080px){.contact-grid,.faq-grid{grid-template-columns:1fr;}.footer-top{grid-template-columns:1fr 1fr;}nav ul{display:none;}}
 @media(max-width:640px){.form-row{grid-template-columns:1fr;}.footer-top{grid-template-columns:1fr;}.form-card{padding:26px 20px;}}
+
+/* ─── HAMBURGER (mobile) ──────────────────────────────────────── */
+.hamburger{display:none;flex-direction:column;justify-content:center;align-items:center;width:40px;height:40px;gap:5px;cursor:pointer;border:1px solid var(--border);border-radius:7px;background:transparent;padding:0;flex-shrink:0;}
+.hamburger span{display:block;width:20px;height:2px;background:var(--cyan);border-radius:2px;transition:transform .3s ease,opacity .3s ease;}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.mobile-menu{
+  display:flex;flex-direction:column;
+  position:fixed;top:66px;left:0;right:0;z-index:998;
+  background:rgba(7,11,15,0.97);backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+  max-height:0;overflow:hidden;padding:0;
+  transition:max-height .38s cubic-bezier(.4,0,.2,1), padding .38s ease;
+  pointer-events:none;
+}
+.mobile-menu.open{max-height:400px;padding:12px 0 20px;pointer-events:auto;}
+.mobile-menu a{
+  display:block;padding:14px 7%;
+  color:var(--muted);text-decoration:none;
+  font-size:1rem;font-weight:500;
+  border-bottom:1px solid rgba(0,220,255,0.06);
+  transition:color .2s,background .2s;
+}
+.mobile-menu a:last-child{border-bottom:none;}
+.mobile-menu a:hover,.mobile-menu a.active{color:var(--cyan);background:rgba(0,220,255,0.04);}
+.mobile-menu a.m-cta{color:var(--cyan);font-weight:700;}
+@media(max-width:1080px){
+  .hamburger{display:flex;}
+}
 </style>
 </head>
 <body>
 <nav>
   <a href="index.html" class="nav-logo"><div class="nav-logo-icon">CV</div><span class="nav-logo-name">Cogni<span>volt</span></span></a>
   <ul><li><a href="index.html">Home</a></li><li><a href="solution.html">Solution</a></li><li><a href="features.html">Features</a></li><li><a href="technology.html">Technology</a></li><li><a href="contact.html" class="nav-cta active">Contact Us</a></li></ul>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html" class="">Home</a>
+  <a href="solution.html" class="">Solution</a>
+  <a href="features.html" class="">Features</a>
+  <a href="technology.html" class="">Technology</a>
+  <a href="contact.html" class="active m-cta">Contact Us</a>
+</div>
 
 <div class="page-hero">
   <div class="page-hero-bg"></div><div class="page-hero-grid"></div>
@@ -389,6 +429,35 @@ const io = new IntersectionObserver(
   { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
 );
 document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+</script>
+<script>
+const io = new IntersectionObserver(
+  e => e.forEach(el => { if (el.isIntersecting) el.target.classList.add('visible'); }),
+  { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+);
+document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+</script>
+<script>
+function toggleMenu() {
+  var btn  = document.getElementById('hamburger');
+  var menu = document.getElementById('mobileMenu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+document.querySelectorAll('#mobileMenu a').forEach(function(a) {
+  a.addEventListener('click', function() {
+    document.getElementById('hamburger').classList.remove('open');
+    document.getElementById('mobileMenu').classList.remove('open');
+  });
+});
+document.addEventListener('click', function(e) {
+  var nav  = document.querySelector('nav');
+  var menu = document.getElementById('mobileMenu');
+  if (!nav.contains(e.target) && !menu.contains(e.target)) {
+    document.getElementById('hamburger').classList.remove('open');
+    menu.classList.remove('open');
+  }
+});
 </script>
 </body>
 </html>

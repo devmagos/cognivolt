@@ -82,13 +82,73 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:64px 6%
 .fade-up.visible{opacity:1;transform:translateY(0);}
 @media(max-width:1080px){.feat-grid,.tab-content.active{grid-template-columns:1fr;}.footer-top{grid-template-columns:1fr 1fr;}nav ul{display:none;}}
 @media(max-width:640px){.footer-top{grid-template-columns:1fr;}}
+
+/* ─── HAMBURGER (mobile) ──────────────────────────────────────── */
+.hamburger{display:none;flex-direction:column;justify-content:center;align-items:center;width:40px;height:40px;gap:5px;cursor:pointer;border:1px solid var(--border);border-radius:7px;background:transparent;padding:0;flex-shrink:0;}
+.hamburger span{display:block;width:20px;height:2px;background:var(--cyan);border-radius:2px;transition:transform .3s ease,opacity .3s ease;}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.mobile-menu{
+  display:flex;flex-direction:column;
+  position:fixed;top:66px;left:0;right:0;z-index:998;
+  background:rgba(7,11,15,0.97);backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+  max-height:0;overflow:hidden;padding:0;
+  transition:max-height .38s cubic-bezier(.4,0,.2,1), padding .38s ease;
+  pointer-events:none;
+}
+.mobile-menu.open{max-height:400px;padding:12px 0 20px;pointer-events:auto;}
+.mobile-menu a{
+  display:block;padding:14px 7%;
+  color:var(--muted);text-decoration:none;
+  font-size:1rem;font-weight:500;
+  border-bottom:1px solid rgba(0,220,255,0.06);
+  transition:color .2s,background .2s;
+}
+.mobile-menu a:last-child{border-bottom:none;}
+.mobile-menu a:hover,.mobile-menu a.active{color:var(--cyan);background:rgba(0,220,255,0.04);}
+.mobile-menu a.m-cta{color:var(--cyan);font-weight:700;}
+@media(max-width:1080px){
+  .hamburger{display:flex;}
+}
+
+.page-hero-img{
+  position:absolute;right:0;top:0;bottom:0;width:46%;z-index:1;
+  overflow:hidden;
+}
+.page-hero-img img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  filter:brightness(0.55) saturate(1.1);
+}
+.page-hero-img::before{
+  content:'';position:absolute;inset:0;z-index:2;
+  background:linear-gradient(90deg, var(--dark) 0%, transparent 40%);
+}
+.page-hero-img::after{
+  content:'';position:absolute;inset:0;z-index:2;
+  background:linear-gradient(to bottom, rgba(7,11,15,0.35) 0%, transparent 40%, rgba(7,11,15,0.55) 100%);
+}
+@media(max-width:1080px){
+  .page-hero-img{display:none;}
+}
 </style>
 </head>
 <body>
 <nav>
   <a href="index.html" class="nav-logo"><div class="nav-logo-icon">CV</div><span class="nav-logo-name">Cogni<span>volt</span></span></a>
   <ul><li><a href="index.html">Home</a></li><li><a href="solution.html">Solution</a></li><li><a href="features.html" class="active">Features</a></li><li><a href="technology.html">Technology</a></li><li><a href="contact.html" class="nav-cta">Contact Us</a></li></ul>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html" class="">Home</a>
+  <a href="solution.html" class="">Solution</a>
+  <a href="features.html" class="active">Features</a>
+  <a href="technology.html" class="">Technology</a>
+  <a href="contact.html" class="m-cta">Contact Us</a>
+</div>
 <div class="page-hero">
   <div class="page-hero-bg"></div><div class="page-hero-grid"></div>
   <div class="page-hero-inner">
@@ -96,6 +156,7 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:64px 6%
     <h1>Everything Your Fleet Needs. <span class="accent">Nothing It Doesn't.</span></h1>
     <p>Ten enterprise-grade capabilities proven across 2,400+ vehicles operating on Nigerian roads. Each feature ships with a documented ROI benchmark.</p>
   </div>
+  <div class="page-hero-img"><img src="https://images.unsplash.com/photo-1580674285054-bed31e145f59?w=1200&q=80" alt="Fleet management command dashboard on multiple screens" loading="lazy"/></div>
 </div>
 
 <section>
@@ -173,6 +234,35 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:64px 6%
 <script>
 function showTab(id,btn){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
 const io=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible');});},{threshold:0.1});document.querySelectorAll('.fade-up').forEach(el=>io.observe(el));
+</script>
+<script>
+const io = new IntersectionObserver(
+  e => e.forEach(el => { if (el.isIntersecting) el.target.classList.add('visible'); }),
+  { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+);
+document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+</script>
+<script>
+function toggleMenu() {
+  var btn  = document.getElementById('hamburger');
+  var menu = document.getElementById('mobileMenu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+document.querySelectorAll('#mobileMenu a').forEach(function(a) {
+  a.addEventListener('click', function() {
+    document.getElementById('hamburger').classList.remove('open');
+    document.getElementById('mobileMenu').classList.remove('open');
+  });
+});
+document.addEventListener('click', function(e) {
+  var nav  = document.querySelector('nav');
+  var menu = document.getElementById('mobileMenu');
+  if (!nav.contains(e.target) && !menu.contains(e.target)) {
+    document.getElementById('hamburger').classList.remove('open');
+    menu.classList.remove('open');
+  }
+});
 </script>
 </body>
 </html>
